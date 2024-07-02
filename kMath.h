@@ -5,7 +5,15 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include <cmath>
+#include <cassert>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
+struct Sphere
+{
+	Vector3 center; //!< 中心点
+	float radius;   //!< 半径
+};
 
 struct Transform
 {
@@ -42,6 +50,9 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 // 3, z軸回転行列
 Matrix4x4 MakeRotateZMatrix(float radian);
 
+//座標変換
+Vector3 MatrixTransform(const Vector3& vector, const Matrix4x4& matrix);
+
 // Scale計算
 Matrix4x4 MakeScaleMatrix(Vector3 scale);
 
@@ -66,3 +77,6 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 
 // 3, ビューポート変換行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+
+// 球体描画
+//void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);

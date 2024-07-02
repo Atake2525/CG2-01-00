@@ -1,6 +1,6 @@
-#include "kMath.h"
+ï»¿#include "kMath.h"
 
-//’PˆÊs—ñ‚Ìì¬
+//å˜ä½è¡Œåˆ—ã®ä½œæˆ
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 ans = { 0 };
 	for (int a = 0; a < 4; a++) {
@@ -14,7 +14,7 @@ Matrix4x4 MakeIdentity4x4() {
 	return ans;
 };
 
-// 1, 2ŸŒ³‚Ì²‰ñ“]s—ñ
+// 1, 2æ¬¡å…ƒã®è»¸å›è»¢è¡Œåˆ—
 Matrix3x3 MakeRotateMatrix3x3(float radian) {
 	Matrix3x3 ans = { 0 };
 	ans.m[0][0] = std::cos(radian);
@@ -26,18 +26,18 @@ Matrix3x3 MakeRotateMatrix3x3(float radian) {
 };
 
 
-//  s—ñ‚ÌÏ
+//  è¡Œåˆ—ã®ç©
 Matrix3x3 Multiply3x3(const Matrix3x3& m1, const Matrix3x3& m2) {
 	Matrix3x3 ans;
-	for (int a = 0; a < 3; a++) {
-		for (int b = 0; b < 3; b++) {
-			ans.m[a][b] = m1.m[a][0] * m2.m[0][b] + m1.m[a][1] * m2.m[1][b] + m1.m[a][2] * m2.m[2][b] + m1.m[a][3] * m2.m[3][b];
+	for (int a = 0; a < 2; a++) {
+		for (int b = 0; b < 2; b++) {
+			ans.m[a][b] = m1.m[a][0] * m2.m[0][b] + m1.m[a][1] * m2.m[1][b] + m1.m[a][2] * m2.m[2][b];
 		}
 	}
 	return ans;
 };
 
-//2ŸŒ³ƒAƒtƒBƒ“•ÏŠ·s—ñ
+//2æ¬¡å…ƒã‚¢ãƒ•ã‚£ãƒ³å¤‰æ›è¡Œåˆ—
 Matrix3x3 MakeAffineMatrix3x3(const Vector2& scale, const Vector2& rotate, const Vector2& translate) {
 	Matrix3x3 S = { 0 };
 	Matrix3x3 R = { 0 };
@@ -70,7 +70,7 @@ Matrix3x3 MakeAffineMatrix3x3(const Vector2& scale, const Vector2& rotate, const
 	return ans;
 };
 
-// 1, x²‰ñ“]s—ñ
+// 1, xè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateXMatrix(float radian) {
 	Matrix4x4 ans = { 0 };
 
@@ -84,7 +84,7 @@ Matrix4x4 MakeRotateXMatrix(float radian) {
 	return ans;
 };
 
-// 2, y²‰ñ“]s—ñ
+// 2, yè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateYMatrix(float radian) {
 	Matrix4x4 ans = { 0 };
 
@@ -98,7 +98,7 @@ Matrix4x4 MakeRotateYMatrix(float radian) {
 	return ans;
 };
 
-// 3, z²‰ñ“]s—ñ
+// 3, zè»¸å›è»¢è¡Œåˆ—
 Matrix4x4 MakeRotateZMatrix(float radian) {
 	Matrix4x4 ans = { 0 };
 
@@ -112,7 +112,23 @@ Matrix4x4 MakeRotateZMatrix(float radian) {
 	return ans;
 };
 
-// ScaleŒvZ
+//åº§æ¨™å¤‰æ›
+Vector3 MatrixTransform(const Vector3& vector, const Matrix4x4& matrix) {
+	Vector3 ans;
+
+	ans.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+	ans.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+	ans.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+	assert(w != 0.0f);
+	ans.x /= w;
+	ans.y /= w;
+	ans.z /= w;
+
+	return ans;
+}
+
+// Scaleè¨ˆç®—
 Matrix4x4 MakeScaleMatrix(Vector3 scale) {
 	Matrix4x4 ans = { 0 };
 
@@ -124,7 +140,7 @@ Matrix4x4 MakeScaleMatrix(Vector3 scale) {
 	return ans;
 };
 
-// TranslateŒvZ
+// Translateè¨ˆç®—
 Matrix4x4 MakeTranslateMatrix(Vector3 translate) {
 	Matrix4x4 ans = { 0 };
 
@@ -139,7 +155,7 @@ Matrix4x4 MakeTranslateMatrix(Vector3 translate) {
 	return ans;
 };
 
-//  s—ñ‚ÌÏ
+//  è¡Œåˆ—ã®ç©
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 ans;
 	for (int a = 0; a < 4; a++) {
@@ -150,7 +166,7 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return ans;
 };
 
-//‚RŸŒ³ƒAƒtƒBƒ“•ÏŠ·s—ñ
+//ï¼“æ¬¡å…ƒã‚¢ãƒ•ã‚£ãƒ³å¤‰æ›è¡Œåˆ—
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 	Matrix4x4 S = { 0 };
 	Matrix4x4 R = { 0 };
@@ -197,7 +213,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return ans;
 };
 
-//‹ts—ñ
+//é€†è¡Œåˆ—
 Matrix4x4 Inverse(const Matrix4x4& m) {
 	Matrix4x4 ans;
 	float inverse;
@@ -234,7 +250,7 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 };
 
 
-// 1, “§‹“Š‰es—ñ
+// 1, é€è¦–æŠ•å½±è¡Œåˆ—
 Matrix4x4 MakePrespectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 	Matrix4x4 ans = { 0 };
 
@@ -249,7 +265,7 @@ Matrix4x4 MakePrespectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 	return ans;
 };
 
-// 2, ³Ë‰es—ñ
+// 2, æ­£å°„å½±è¡Œåˆ—
 Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
 	Matrix4x4 ans = { 0 };
 
@@ -264,7 +280,7 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	return ans;
 };
 
-// 3, ƒrƒ…[ƒ|[ƒg•ÏŠ·s—ñ
+// 3, ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆå¤‰æ›è¡Œåˆ—
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
 	Matrix4x4 ans = { 0 };
 
@@ -278,3 +294,49 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 	return ans;
 };
+
+/*// çƒä½“æç”»
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+	const uint32_t kSubdivision = 16;
+	const float kLonEvery = float(M_PI) / float(kSubdivision);	//Ï†d
+	const float kLatEvery = 2 * float(M_PI) / float(kSubdivision);	//Î˜d
+
+	//float centerx = sphere.radius * cos(kLatEvery) * cos(kLonEvery);
+	//float centerz = sphere.radius * cos(kLatEvery) * sin(kLonEvery);
+	// ç·¯åº¦ã®æ–¹å‘ã«åˆ†å‰² -Ï€/2 ~ Ï€/2
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++)
+	{
+		float lat = -float(M_PI) / 2.0f + kLatEvery * latIndex;// ç¾åœ¨ã®ç·¯åº¦(Î˜)
+		// çµŒåº¦ã®æ–¹å‘ã«åˆ†å‰² 0 ï½ 2Ï€
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++)
+		{
+			float lon = lonIndex * kLonEvery; // ç¾åœ¨ã®çµŒåº¦(Ï†)
+			// worldåº§æ¨™ç³»ã§ã®a,b,cã‚’æ±‚ã‚ã‚‹
+			Vector3 a, b, c, d;
+			a = { cos(lat) * cos(lon) * sphere.radius + sphere.center.x,
+				  sin(lat) * sphere.radius + sphere.center.y,
+				  cos(lat) * sin(lon) * sphere.radius + sphere.center.z };
+
+
+			b = { cos(lat + kLatEvery) * cos(lon) * sphere.radius + sphere.center.x,
+				  sin(lat + kLatEvery) * sphere.radius + sphere.center.y,
+				  cos(lat + kLatEvery) * sin(lon) * sphere.radius + sphere.center.z };
+
+			c = { cos(lat) * cos(lon + kLonEvery) * sphere.radius + sphere.center.x,
+				  sin(lat) * sphere.radius + sphere.center.y,
+				  cos(lat) * sin(lon + kLonEvery) * sphere.radius + sphere.center.z };
+
+			d = { cos(lat + kLatEvery) * cos(lon + kLonEvery) * sphere.radius + sphere.center.x,
+				  sin(lat + kLatEvery) * sphere.radius + sphere.center.y,
+				  cos(lat + kLatEvery) * sin(lon + kLonEvery) * sphere.radius + sphere.center.z };
+
+			Vector3 screenA = MatrixTransform(MatrixTransform(a, viewProjectionMatrix), viewportMatrix);
+			Vector3 screenB = MatrixTransform(MatrixTransform(b, viewProjectionMatrix), viewportMatrix);
+			Vector3 screenC = MatrixTransform(MatrixTransform(c, viewProjectionMatrix), viewportMatrix);
+			Vector3 screenD = MatrixTransform(MatrixTransform(d, viewProjectionMatrix), viewportMatrix);
+			// a,b,cã‚’Screenåº§æ¨™ç³»ã¾ã§å¤‰æ›
+			//ab,bcã§ç·šã‚’å¼•ã
+		}
+	}
+	uint32_t startIndex = (latIndex * kSubdivision + lonIndex) * 6;
+};*/

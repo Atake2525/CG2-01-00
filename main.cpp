@@ -126,6 +126,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 				//modelData.vertices.push_back(vertex);
 				position.x *= -1.0f;
 				normal.x *= -1.0f;
+				texcoord.y = 1.0f - texcoord.y;
 				triangle[faceVertex] = { position, texcoord, normal };
 			}
 			// 頂点を逆順で登録することで、周り順を逆にする
@@ -144,6 +145,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	// 4. ModelDataを返す
 	return modelData;
 }
+
 
 //ウィンドウプロージャ
 LRESULT CALLBACK WindwsProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -728,10 +730,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 
-	// Sprite用の頂点リソースを作る
-	//hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResourceSphere));
-	//assert(SUCCEEDED(hr));
-
 	// Model用のTransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	ID3D12Resource* transformationMatrixResourceSphere = CreateBufferResource(device, sizeof(Matrix4x4));
 	// データを書き込む
@@ -741,25 +739,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	*tranformationMatrixDataSphere = MakeIdentity4x4();
 	
-	/*// 左下
+
+	// 左下
 	vertexDataSphere[0].position = { -0.5f, -0.5f, 0.0f, 1.0f };
 	vertexDataSphere[0].texcoord = { 0.0f, 1.0f };
 	// 上
 	vertexDataSphere[1].position = { 0.0f, 0.5f, 0.0f, 1.0f };
-	vertexDataSphere[1].texcoord = { 0.5f, 0.0f };
+	vertexDataSphere[1].texcoord = { 0.0f, 0.0f };
 	// 右下
 	vertexDataSphere[2].position = { 0.5f, -0.5f, 0.0f, 1.0f };
 	vertexDataSphere[2].texcoord = { 1.0f, 1.0f };
 
 	// 左下2
 	vertexDataSphere[3].position = { -0.5f, -0.5f, 0.5f, 1.0f };
-	vertexDataSphere[3].texcoord = { 0.0f, 1.0f };
+	vertexDataSphere[3].texcoord = { 0.0f, 0.0f };
 	// 上2
 	vertexDataSphere[4].position = { 0.0f, 0.0f, 0.0f, 1.0f };
-	vertexDataSphere[4].texcoord = { 0.5f, 0.0f };
+	vertexDataSphere[4].texcoord = { 1.0f, 0.0f };
 	// 右下2
 	vertexDataSphere[5].position = { 0.5f, -0.5f, -0.5f, 1.0f };
-	vertexDataSphere[5].texcoord = { 1.0f, 1.0f };*/
+	vertexDataSphere[5].texcoord = { 1.0f, 1.0f };
 
 	// Transform変数を作る
 	Transform transformSphere{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f} };
@@ -814,6 +813,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(Material));
 	// Sprite用のマテリアルリソースを作る
 	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(Material));
+
 	// マテリアルにデータを書き込む
 	Material* materialData = nullptr;
 	Material* materialDataSprite = nullptr;
@@ -821,6 +821,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// データを書き込む
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
+	
 	// 今回は赤を書き込んでみる
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialDataSprite->color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -917,18 +918,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexDataSprite = nullptr;
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 
-	//1枚目の三角形
+	
 	vertexDataSprite[0].position = { 0.0f, 360.0f, 0.0f, 1.0f }; // 左下
 	vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
+
 	vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f }; // 左上
-	vertexDataSprite[1].texcoord = { 0.5f, 0.0f };
+	vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
+
 	vertexDataSprite[2].position = { 640.0f, 360.0f, 0.0f, 1.0f }; // 右下
 	vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
-	// 2枚目の三角形
+
+	
 	vertexDataSprite[3].position = { 0.0f, 0.0f, 0.0f, 1.0f }; // 左上
-	vertexDataSprite[3].texcoord = { 0.0f, 1.0f };
+	vertexDataSprite[3].texcoord = { 0.0f, 0.0f };
+
 	vertexDataSprite[4].position = { 640.0f, 0.0f, 0.0f, 1.0f }; // 右上
-	vertexDataSprite[4].texcoord = { 0.5f, 0.0f };
+	vertexDataSprite[4].texcoord = { 1.0f, 0.0f };
+
 	vertexDataSprite[5].position = { 640.0f, 360.0f, 0.0f, 1.0f }; // 右下
 	vertexDataSprite[5].texcoord = { 1.0f, 1.0f };
 
@@ -958,6 +964,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * 6); // 使用するリソースのサイズは頂点のサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData); // 1頂点当たりのサイズ
 
+	//1枚目の三角形
 	// 左下
 	vertexData[0].position = { -0.5f, -0.5f, 0.0f, 1.0f };
 	vertexData[0].texcoord = { 0.0f, 1.0f };
@@ -968,6 +975,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexData[2].position = { 0.5f, -0.5f, 0.0f, 1.0f };
 	vertexData[2].texcoord = { 1.0f, 1.0f };
 
+	// 2枚目の三角形
 	// 左下2
 	vertexData[3].position = { -0.5f, -0.5f, 0.5f, 1.0f };
 	vertexData[3].texcoord = { 0.0f, 1.0f };
@@ -1315,9 +1323,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 			// TransformationMatrixCBbufferの場所を設定
-			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			// 描画
-			//commandList->DrawInstanced(6, 1, 0, 0);
+			commandList->DrawInstanced(6, 1, 0, 0);
 
 			// ModelData描画
 			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
